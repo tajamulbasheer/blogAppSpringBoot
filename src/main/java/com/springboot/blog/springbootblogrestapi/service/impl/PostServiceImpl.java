@@ -5,6 +5,9 @@ import com.springboot.blog.springbootblogrestapi.exception.ResourceNotFoundExcep
 import com.springboot.blog.springbootblogrestapi.payload.PostResponse;
 import com.springboot.blog.springbootblogrestapi.repository.PostRepository;
 import com.springboot.blog.springbootblogrestapi.service.PostService;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -16,10 +19,14 @@ import java.util.Optional;
 
 @Service
 class PostServiceImpl implements PostService {
+    @Autowired
     private PostRepository postRepository;
+    @Autowired
+    private ModelMapper modelMapper;
 
-    public PostServiceImpl(PostRepository postRepository) {
+    public PostServiceImpl(PostRepository postRepository,ModelMapper mapper) {
         this.postRepository = postRepository;
+        this.modelMapper=mapper;
     }
 
     @Override
@@ -73,20 +80,22 @@ class PostServiceImpl implements PostService {
     }
 
     private PostDto convertPostToPostDto(Post savedPost) {
-        PostDto postDto= new PostDto();
-        postDto.setContent(savedPost.getContent());
-        postDto.setDescription(savedPost.getTitle());
-        postDto.setId(savedPost.getId());
-        postDto.setTitle(savedPost.getTitle());
-        return postDto;
+        return  modelMapper.map(savedPost,PostDto.class);
+//        PostDto postDto= new PostDto();
+//        postDto.setContent(savedPost.getContent());
+//        postDto.setDescription(savedPost.getTitle());
+//        postDto.setId(savedPost.getId());
+//        postDto.setTitle(savedPost.getTitle());
+//        return postDto;
     }
 
     private Post convertPostDtoToEntity(PostDto postDto) {
-        var post= new Post();
-        post.setTitle(postDto.getTitle());
-        post.setDescription(postDto.getDescription());
-        post.setContent(postDto.getContent());
-        return  post;
+       return  modelMapper.map(postDto,Post.class);
+//        var post= new Post();
+//        post.setTitle(postDto.getTitle());
+//        post.setDescription(postDto.getDescription());
+//        post.setContent(postDto.getContent());
+//        return  post;
 
     }
 }
